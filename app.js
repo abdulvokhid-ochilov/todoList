@@ -1,27 +1,23 @@
 const express = require("express");
-// const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const _ = require("lodash");
+const dotenv = require("dotenv");
+
+dotenv.config({ path: "./config.env" });
 
 const app = express();
-const password = "hHDrqMCwoQ3DiH8V";
-const user = "user_todolist";
-
-// let items = ["Study", "Eat", "Work", "Sleep"];
+const password = process.env.PASSWORD;
+const DB = process.env.DATABASE.replace("<PASSWORD>", process.env.PASSWORD);
 
 app.set("view engine", "ejs");
-// app.use(bodyParser.urlencoded());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.static("public"));
 
-mongoose.connect(
-  `mongodb+srv://user_todolist:${password}@cluster0.xltgg.mongodb.net/todolistdb`,
-  {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  }
-);
+mongoose.connect(DB, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 mongoose.set("useFindAndModify", false);
 
 const itemsSchema = new mongoose.Schema({
@@ -125,7 +121,6 @@ app.post("/delete", function (req, res) {
         console.log("Successfully deleted");
         res.redirect("/");
       }
-      // deleted at most one tank document
     });
   } else {
     List.findOneAndUpdate(
